@@ -1,6 +1,6 @@
 import { UserAuth } from "@/components/auth/UserAuth";
 
-export const Login = () => {
+export default function Login() {
   return (
     <>
       <div>
@@ -8,4 +8,4 @@ export const Login = () => {
       </div>
     </>
   );
-};
+}
