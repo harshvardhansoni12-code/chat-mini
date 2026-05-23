@@ -1,12 +1,10 @@
-import button from "../../../../components/ui/button";
+import { UserAuth } from "@/components/auth/UserAuth";
 
 export const Login = () => {
   return (
     <>
       <div>
-        <div>
-          <button variant="ghost">hello</button>
-        </div>
+        <UserAuth />
       </div>
     </>
   );
