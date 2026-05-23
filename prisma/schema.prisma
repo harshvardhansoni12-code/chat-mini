@@ -14,3 +14,12 @@ model User {
   password  String
   CreatedAt DateTime @default(now())
 }
+
+model Room {
+  id String @id @default(uuid())
+  roomname String 
+  roomcode String @unique
+  CreatedAt DateTime @default(now())
+  deletedAt DateTime ?
+  }
+  
