@@ -13,6 +13,7 @@ model User {
   email     String   @unique
   password  String
   CreatedAt DateTime @default(now())
+  room Room[]
 }
 
 model Room {
@@ -21,5 +22,7 @@ model Room {
   roomcode String @unique
   CreatedAt DateTime @default(now())
   deletedAt DateTime ?
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
   }
   
