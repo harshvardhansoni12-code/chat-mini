@@ -1,10 +1,12 @@
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/user/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request) {
-  const session = getServerSession();
+  const session = await getServerSession(authOptions);
   const { roomcode } = await request.json();
-  if (!session || !session.user) {
-    return Response.json({ message: "user not logged in" }, { status: 301 });
+  if (!session || !session.user || !session.user.id) {
+    return Response.json({ message: "user not logged in" }, { status: 401 });
   }
   const roomFound = await prisma.room.findUnique({
     where: {

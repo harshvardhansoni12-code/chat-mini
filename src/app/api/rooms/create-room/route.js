@@ -9,7 +9,7 @@ export async function POST(request) {
     if (!session || !session.user || !session.user.id) {
       return Response.json(
         { message: "Unauthorized. User not logged in." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -18,7 +18,7 @@ export async function POST(request) {
     if (!roomname || !roomcode) {
       return Response.json(
         { message: "roomname and roomcode are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request) {
     if (existingRoom) {
       return Response.json(
         { message: "Room code already exists" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,15 +43,24 @@ export async function POST(request) {
       },
     });
 
+    const memberJoined = await prisma.member.create({
+      userId: session.user.id,
+      roomId: roomCreated.id,
+    });
+
+    if (!memberJoined) {
+      return Response.json({ message: "room not joined" }, { status: 402 });
+    }
+
     return Response.json(
       { message: "Room created successfully", room: roomCreated },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Error creating room:", error);
     return Response.json(
       { message: "Internal server error", error: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

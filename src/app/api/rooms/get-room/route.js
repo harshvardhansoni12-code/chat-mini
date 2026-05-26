@@ -1,3 +1,7 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/user/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
+
 export async function GET(request) {
   const session = await getServerSession(authOptions);
 
@@ -8,7 +12,7 @@ export async function GET(request) {
     );
   }
 
-  const roomExist = await prisma.room.FindMany({
+  const roomExist = await prisma.room.findMany({
     where: {
       authorId: session.user.id,
     },
