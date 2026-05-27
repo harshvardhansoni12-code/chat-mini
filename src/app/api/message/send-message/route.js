@@ -1,9 +1,32 @@
+import prisma from "@/lib/prisma";
+import { getServerSession } from "@/lib/auth";
 export async function POST(request) {
-  const { message } = await request.json();
-  //
-  // Here you would typically handle the message, e.g., save it to a database or send it to a messaging service.
-  console.log("Received message:", message);
-  return new Response(JSON.stringify({ status: "Message received", message }), {
-    headers: { "Content-Type": "application/json" },
+  const session = await getServerSession();
+  const { text } = await request.json();
+  if (!session || !session.user.id) {
+    return Response.json(
+      { error: "Unauthorized" },
+      {
+        status: 401,
+      },
+    );
+  }
+  const messageCreated = await prisma.message.create({
+    text: text,
+    userId: session.user.id,
   });
+
+  if (!messageCreated) {
+    return Response.json(
+      { error: "Failed to create message" },
+      {
+        status: 500,
+      },
+    );
+  }
+  console.log("Received message:", messageCreated);
+  return Response.json(
+    { message: "Message received", message: messageCreated },
+    { status: 200 },
+  );
 }
