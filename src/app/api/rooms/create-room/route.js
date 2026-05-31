@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
 
     if (!session || !session.user || !session.user.id) {
       return Response.json(
@@ -44,8 +43,10 @@ export async function POST(request) {
     });
 
     const memberJoined = await prisma.member.create({
-      userId: session.user.id,
-      roomId: roomCreated.id,
+      data: {
+        userId: session.user.id,
+        roomId: roomCreated.id,
+      },
     });
 
     if (!memberJoined) {

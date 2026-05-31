@@ -1,10 +1,10 @@
-import Login from "@/app/user/v1/register/page";
+import { UserAuth } from "@/components/auth/UserAuth";
 export default function Home() {
   return (
     <>
       <div className="flex items-center justify-center">
         <div>
-          <Login />
+          <UserAuth />
         </div>
       </div>
     </>
