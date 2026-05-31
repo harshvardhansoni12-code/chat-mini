@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/user/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request) {
@@ -17,8 +17,10 @@ export async function POST(request) {
     return Response.json({ message: "this room not exist" }, { status: 400 });
   }
   const memberJoined = await prisma.member.create({
-    userId: session.user.id,
-    roomId: roomFound.id,
+    data: {
+      userId: session.user.id,
+      roomId: roomFound.id,
+    },
   });
   if (!memberJoined) {
     return Response.json({ message: "member not joined" }, { status: 301 });

@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "../../../../lib/prisma";
+import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import GitHubProvider from "next-auth/providers/github";
 export const authOptions = {
@@ -18,6 +18,7 @@ export const authOptions = {
 
       async authorize(credentials) {
         console.log(credentials);
+        console.log("before user found");
         const userFound = await prisma.user.findUnique({
           where: {
             email: credentials.email,
@@ -26,6 +27,9 @@ export const authOptions = {
         if (!userFound) {
           return null;
         }
+        console.log("after user found");
+        console.log(userFound);
+        console.log("before password compare");
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           userFound.password,
@@ -33,6 +37,7 @@ export const authOptions = {
         if (!isPasswordValid) {
           return null;
         }
+        console.log("after password compare");
         return {
           id: userFound.id,
           email: userFound.email,
