@@ -1,9 +1,10 @@
-import { getServerSession } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
 
     if (!session || !session.user || !session.user.id) {
       return Response.json(
@@ -11,7 +12,6 @@ export async function POST(request) {
         { status: 401 },
       );
     }
-
     const { roomname, roomcode } = await request.json();
 
     if (!roomname || !roomcode) {
@@ -52,7 +52,7 @@ export async function POST(request) {
     if (!memberJoined) {
       return Response.json({ message: "room not joined" }, { status: 402 });
     }
-
+    //  "csrfToken":"81656cfaaa1896f91383e0acac959d85b06732b2cb287a8b9c2417abb65e026c"
     return Response.json(
       { message: "Room created successfully", room: roomCreated },
       { status: 201 },
