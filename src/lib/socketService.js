@@ -1,5 +1,7 @@
 import { Server } from "socket.io";
-import prisma from "@/lib/prisma";
+import { findRoomMember, listRoomMembers } from "@/lib/roomService";
+import { createMessage, getMessagesByRoom } from "@/lib/messageService";
+import { getUserById } from "@/lib/userService";
 
 let io = null;
 const connectedUsers = new Map(); // userId -> socket info
@@ -61,15 +63,12 @@ export function initializeSocket(server) {
         }
 
         // Verify user is member of room
-        const member = await prisma.member.findFirst({
-          where: {
-            userId,
-            roomId,
-          },
-        });
+        const member = await findRoomMember({ roomId, userId });
 
         if (!member) {
-          socket.emit("error", { message: "User is not a member of this room" });
+          socket.emit("error", {
+            message: "User is not a member of this room",
+          });
           return;
         }
 
@@ -102,49 +101,45 @@ export function initializeSocket(server) {
         const { text, roomId, userId } = data;
 
         if (!text || !roomId || !userId) {
-          socket.emit("error", { message: "text, roomId, and userId are required" });
+          socket.emit("error", {
+            message: "text, roomId, and userId are required",
+          });
           return;
         }
 
         // Verify user is in the room
-        const member = await prisma.member.findFirst({
-          where: {
-            userId,
-            roomId,
-          },
-        });
+        const member = await findRoomMember({ roomId, userId });
 
         if (!member) {
-          socket.emit("error", { message: "User is not a member of this room" });
+          socket.emit("error", {
+            message: "User is not a member of this room",
+          });
           return;
         }
 
         // Create message in database
-        const message = await prisma.message.create({
-          data: {
-            text,
-            roomId,
-            userId,
-            memberId: member.id,
-          },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
+        const message = await createMessage({
+          text,
+          roomId,
+          senderId: userId,
+          memberId: member.id,
         });
+        const user = await getUserById(userId);
+
+        if (!user) {
+          socket.emit("error", {
+            message: "Message created, but user not found",
+          });
+          return;
+        }
 
         // Broadcast to room
         io.to(`room:${roomId}`).emit("message:received", {
           id: message.id,
           text: message.text,
           userId: message.userId,
-          userName: message.user.name || "Anonymous",
-          userEmail: message.user.email,
+          userName: user.name || "Anonymous",
+          userEmail: user.email,
           roomId: message.roomId,
           timestamp: message.createdAt,
         });
@@ -153,7 +148,10 @@ export function initializeSocket(server) {
         console.log(`Message sent in room ${roomId} by user ${userId}`);
       } catch (error) {
         console.error("Error in message:send:", error);
-        socket.emit("error", { message: "Failed to send message", error: error.message });
+        socket.emit("error", {
+          message: "Failed to send message",
+          error: error.message,
+        });
       }
     });
 
@@ -167,20 +165,7 @@ export function initializeSocket(server) {
           return;
         }
 
-        const members = await prisma.member.findMany({
-          where: {
-            roomId,
-          },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        });
+        const members = await listRoomMembers(roomId);
 
         const memberList = members.map((m) => ({
           id: m.user.id,
@@ -207,37 +192,20 @@ export function initializeSocket(server) {
           return;
         }
 
-        const messages = await prisma.message.findMany({
-          where: {
-            roomId,
-          },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          take: limit,
-          skip: offset,
+        const messages = await getMessagesByRoom(roomId, {
+          limit,
+          offset,
         });
 
-        const messageList = messages
-          .reverse()
-          .map((m) => ({
-            id: m.id,
-            text: m.text,
-            userId: m.userId,
-            userName: m.user.name || "Anonymous",
-            userEmail: m.user.email,
-            roomId: m.roomId,
-            timestamp: m.createdAt,
-          }));
+        const messageList = messages.reverse().map((m) => ({
+          id: m.id,
+          text: m.text,
+          userId: m.userId,
+          userName: m.user.name || "Anonymous",
+          userEmail: m.user.email,
+          roomId: m.roomId,
+          timestamp: m.createdAt,
+        }));
 
         socket.emit("message:history", { messages: messageList });
         console.log(`Message history retrieved for room ${roomId}`);

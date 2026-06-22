@@ -1,22 +1,46 @@
 import prisma from "@/lib/prisma";
 
-export async function createMessage({ text, roomId, senderId }) {
+export async function createMessage({ text, roomId, senderId, memberId }) {
   return prisma.message.create({
     data: {
       text,
       roomId,
-      senderId,
+      userId: senderId,
+      memberId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
     },
   });
 }
 
-export async function getMessagesByRoom(roomId) {
+export async function getMessagesByRoom(
+  roomId,
+  { limit = 50, offset = 0 } = {},
+) {
   return prisma.message.findMany({
     where: {
       roomId,
     },
-    orderBy: {
-      createdAt: "asc",
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: limit,
+    skip: offset,
   });
 }

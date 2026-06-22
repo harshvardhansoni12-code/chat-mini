@@ -75,18 +75,6 @@ export async function findRoomMember({ roomId, userId }) {
   });
 }
 
-export async function getRoomMemberById(memberId) {
-  return prisma.member.findUnique({
-    where: {
-      id: memberId,
-    },
-    include: {
-      user: true,
-      room: true,
-    },
-  });
-}
-
 export async function listRoomMembers(roomId) {
   return prisma.member.findMany({
     where: {
