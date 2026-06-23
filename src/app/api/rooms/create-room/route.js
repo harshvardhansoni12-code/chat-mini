@@ -46,6 +46,7 @@ export async function POST(request) {
       data: {
         userId: session.user.id,
         roomId: roomCreated.id,
+        role: "ADMIN",
       },
     });
 

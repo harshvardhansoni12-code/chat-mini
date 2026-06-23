@@ -29,15 +29,22 @@ export async function POST(request) {
     },
   });
   if (existingMember) {
-    return Response.json({ message: "already joined" }, { status: 409 });
+    return Response.json(
+      { message: "Already a member", room: roomFound },
+      { status: 200 },
+    );
   }
 
   const memberJoined = await prisma.member.create({
     data: {
       userId: session.user.id,
       roomId: roomFound.id,
+      role: "MEMBER",
     },
   });
 
-  return Response.json({ memberJoined }, { status: 201 });
+  return Response.json(
+    { message: "Room joined successfully", memberJoined, room: roomFound },
+    { status: 201 },
+  );
 }

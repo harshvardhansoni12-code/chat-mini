@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/card";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const UserAuth = () => {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
@@ -37,8 +39,8 @@ export const UserAuth = () => {
         if (result?.error) {
           setError("Invalid email or password.");
         } else {
-          // Success! Redirect to home page or refresh session
-          window.location.reload();
+          // Success! Redirect to rooms page
+          router.push("/rooms");
         }
       } else {
         // Sign up flow
@@ -67,10 +69,12 @@ export const UserAuth = () => {
           });
 
           if (result?.error) {
-            setError("Account created, but automatic sign-in failed. Please login manually.");
+            setError(
+              "Account created, but automatic sign-in failed. Please login manually.",
+            );
             setIsLogin(true);
           } else {
-            window.location.reload();
+            router.push("/rooms");
           }
         }
       }
@@ -97,10 +101,12 @@ export const UserAuth = () => {
                 {error}
               </div>
             )}
-            
+
             {!isLogin && (
               <div className="space-y-1">
-                <label className="text-sm font-medium text-neutral-700">Full Name</label>
+                <label className="text-sm font-medium text-neutral-700">
+                  Full Name
+                </label>
                 <Input
                   required
                   placeholder="John Doe"
@@ -110,9 +116,11 @@ export const UserAuth = () => {
                 />
               </div>
             )}
-            
+
             <div className="space-y-1">
-              <label className="text-sm font-medium text-neutral-700">Email Address</label>
+              <label className="text-sm font-medium text-neutral-700">
+                Email Address
+              </label>
               <Input
                 required
                 type="email"
@@ -122,9 +130,11 @@ export const UserAuth = () => {
                 disabled={loading}
               />
             </div>
-            
+
             <div className="space-y-1">
-              <label className="text-sm font-medium text-neutral-700">Password</label>
+              <label className="text-sm font-medium text-neutral-700">
+                Password
+              </label>
               <Input
                 required
                 type="password"

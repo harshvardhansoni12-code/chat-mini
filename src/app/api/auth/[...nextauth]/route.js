@@ -41,7 +41,7 @@ export const authOptions = {
         return {
           id: userFound.id,
           email: userFound.email,
-          name: userFound.fullname,
+          name: userFound.name,
         };
       },
     }),
@@ -58,7 +58,7 @@ export const authOptions = {
           await prisma.user.create({
             data: {
               email: user.email,
-              fullname: user.name,
+              name: user.name,
               password: "", // GitHub users don't need password
             },
           });
@@ -68,9 +68,20 @@ export const authOptions = {
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
+        // For OAuth providers, user.id is the provider's ID (not our DB ID)
+        // Look up the actual database user by email
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.email = dbUser.email;
+          token.name = dbUser.name;
+        } else {
+          token.id = user.id;
+          token.email = user.email;
+          token.name = user.name;
+        }
       }
       return token;
     },

@@ -36,7 +36,15 @@ model Member{
    userId String
    room Room @relation(fields: [roomId], references: [id])
    roomId String
+   role   Role   @default(MEMBER)
    message Message[]
+
+   @@unique([userId, roomId])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
 }
 
 model Message {
