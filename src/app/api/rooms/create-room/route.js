@@ -53,7 +53,7 @@ export async function POST(request) {
     if (!memberJoined) {
       return Response.json({ message: "room not joined" }, { status: 402 });
     }
-    //  "csrfToken":"81656cfaaa1896f91383e0acac959d85b06732b2cb287a8b9c2417abb65e026c"
+
     return Response.json(
       { message: "Room created successfully", room: roomCreated },
       { status: 201 },
