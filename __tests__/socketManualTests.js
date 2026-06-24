@@ -24,7 +24,7 @@ const testUserConnection = async () => {
   });
 
   socket.on("connect", () => {
-    console.log("✅ Socket connected:", socket.id);
+    console.log("[PASS] Socket connected:", socket.id);
 
     // Emit user:join event
     socket.emit("user:join", {
@@ -34,20 +34,20 @@ const testUserConnection = async () => {
   });
 
   socket.on("user:joined", (data) => {
-    console.log("✅ User joined successfully:", data);
+    console.log("[PASS] User joined successfully:", data);
     console.assert(
       data.success === true,
-      "❌ user:joined should have success: true",
+      "[FAIL] user:joined should have success: true",
     );
-    console.assert(data.userId === "test-user-1", "❌ userId should match");
+    console.assert(data.userId === "test-user-1", "[FAIL] userId should match");
   });
 
   socket.on("error", (error) => {
-    console.error("❌ Error:", error);
+    console.error("[FAIL] Error:", error);
   });
 
   socket.on("disconnect", () => {
-    console.log("⚠️  Socket disconnected");
+    console.log("[WARN] Socket disconnected");
   });
 
   return socket;
@@ -73,8 +73,8 @@ const testRoomJoin = (socket) => {
   });
 
   socket.on("room:user:joined", (data) => {
-    console.log("✅ User joined room:", data);
-    console.assert(data.userId === "test-user-1", "❌ userId should match");
+    console.log("[PASS] User joined room:", data);
+    console.assert(data.userId === "test-user-1", "[FAIL] userId should match");
   });
 };
 
@@ -99,17 +99,17 @@ const testSendMessage = (socket) => {
   });
 
   socket.on("message:sent", (data) => {
-    console.log("✅ Message sent:", data);
+    console.log("[PASS] Message sent:", data);
     console.assert(
       data.success === true,
-      "❌ Message should be sent successfully",
+      "[FAIL] Message should be sent successfully",
     );
   });
 
   socket.on("message:received", (message) => {
-    console.log("✅ Message received:", message);
-    console.assert(message.text !== "", "❌ Message text should not be empty");
-    console.assert(message.userId !== "", "❌ userId should not be empty");
+    console.log("[PASS] Message received:", message);
+    console.assert(message.text !== "", "[FAIL] Message text should not be empty");
+    console.assert(message.userId !== "", "[FAIL] userId should not be empty");
   });
 };
 
@@ -132,15 +132,15 @@ const testGetRoomMembers = (socket) => {
   });
 
   socket.on("room:members:list", (data) => {
-    console.log("✅ Room members retrieved:", data.members);
+    console.log("[PASS] Room members retrieved:", data.members);
     console.assert(
       Array.isArray(data.members),
-      "❌ Members should be an array",
+      "[FAIL] Members should be an array",
     );
     data.members.forEach((member) => {
       console.assert(
         member.id && member.name && member.email,
-        "❌ Member should have id, name, and email",
+        "[FAIL] Member should have id, name, and email",
       );
     });
   });
@@ -167,15 +167,15 @@ const testGetMessageHistory = (socket) => {
   });
 
   socket.on("message:history", (data) => {
-    console.log("✅ Message history retrieved:", data.messages);
+    console.log("[PASS] Message history retrieved:", data.messages);
     console.assert(
       Array.isArray(data.messages),
-      "❌ Messages should be an array",
+      "[FAIL] Messages should be an array",
     );
     data.messages.forEach((msg) => {
       console.assert(
         msg.id && msg.text && msg.userId,
-        "❌ Message should have id, text, and userId",
+        "[FAIL] Message should have id, text, and userId",
       );
     });
   });
@@ -197,7 +197,7 @@ const testTypingIndicator = (socket) => {
   });
 
   socket.on("user:typing:status", (data) => {
-    console.log("✅ User typing status:", data);
+    console.log("[PASS] User typing status:", data);
     if (data.isTyping) {
       console.log(`${data.userName} is typing...`);
     } else {
@@ -229,7 +229,7 @@ const testLeaveRoom = (socket) => {
   });
 
   socket.on("room:user:left", (data) => {
-    console.log("✅ User left room:", data);
+    console.log("[PASS] User left room:", data);
   });
 };
 
@@ -242,7 +242,7 @@ const testLeaveRoom = (socket) => {
  */
 
 async function runCompleteSocketTest() {
-  console.log("🚀 Starting Socket.IO complete test...\n");
+  console.log("Starting Socket.IO complete test...\n");
 
   // Test 1: Connect user
   const socket = await testUserConnection();
@@ -250,7 +250,7 @@ async function runCompleteSocketTest() {
   // Wait for connection
   await new Promise((resolve) => {
     socket.on("user:joined", () => {
-      console.log("\n📝 Test 1: User Connection - PASSED\n");
+      console.log("\nTest 1: User Connection - PASSED\n");
       resolve();
     });
   });
@@ -259,7 +259,7 @@ async function runCompleteSocketTest() {
   testRoomJoin(socket);
   await new Promise((resolve) => {
     socket.on("room:user:joined", () => {
-      console.log("📝 Test 2: Room Join - PASSED\n");
+      console.log("Test 2: Room Join - PASSED\n");
       resolve();
     });
   });
@@ -268,7 +268,7 @@ async function runCompleteSocketTest() {
   testGetRoomMembers(socket);
   await new Promise((resolve) => {
     socket.on("room:members:list", () => {
-      console.log("📝 Test 3: Get Room Members - PASSED\n");
+      console.log("Test 3: Get Room Members - PASSED\n");
       resolve();
     });
   });
@@ -277,7 +277,7 @@ async function runCompleteSocketTest() {
   testGetMessageHistory(socket);
   await new Promise((resolve) => {
     socket.on("message:history", () => {
-      console.log("📝 Test 4: Get Message History - PASSED\n");
+      console.log("Test 4: Get Message History - PASSED\n");
       resolve();
     });
   });
@@ -286,25 +286,25 @@ async function runCompleteSocketTest() {
   testSendMessage(socket);
   await new Promise((resolve) => {
     socket.on("message:sent", () => {
-      console.log("📝 Test 5: Send Message - PASSED\n");
+      console.log("Test 5: Send Message - PASSED\n");
       resolve();
     });
   });
 
   // Test 6: Typing indicator
   testTypingIndicator(socket);
-  console.log("📝 Test 6: Typing Indicator - PASSED\n");
+  console.log("Test 6: Typing Indicator - PASSED\n");
 
   // Test 7: Leave room
   testLeaveRoom(socket);
   await new Promise((resolve) => {
     socket.on("room:user:left", () => {
-      console.log("📝 Test 7: Leave Room - PASSED\n");
+      console.log("Test 7: Leave Room - PASSED\n");
       resolve();
     });
   });
 
-  console.log("✅ All Socket.IO tests completed!\n");
+  console.log("[PASS] All Socket.IO tests completed!\n");
   socket.disconnect();
 }
 

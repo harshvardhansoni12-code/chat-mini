@@ -13,12 +13,12 @@ const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = parseInt(process.env.PORT || "3001", 10);
 
-// ── Prisma ────────────────────────────────────────────────
+// -- Prisma ------------------------------------------------
 const connectionString = process.env.DATABASE_URL;
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
-// ── Next.js ───────────────────────────────────────────────
+// -- Next.js -----------------------------------------------
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
@@ -27,7 +27,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  // ── Socket.IO ─────────────────────────────────────────────
+  // -- Socket.IO ---------------------------------------------
   const io = new Server(httpServer, {
     cors: {
       origin: process.env.NEXT_PUBLIC_SOCKET_URL || `http://${hostname}:${port}`,
@@ -50,9 +50,9 @@ app.prepare().then(() => {
   globalThis.__roomMembers = roomMembers;
 
   io.on("connection", (socket) => {
-    console.log("⚡ Client connected:", socket.id);
+    console.log("Client connected:", socket.id);
 
-    // ── user:join ───────────────────────────────────
+    // -- user:join -------------------------------------------
     socket.on("user:join", (data) => {
       const { userId, userName } = data;
       if (!userId) {
@@ -67,10 +67,10 @@ app.prepare().then(() => {
       socket.userId = userId;
       socket.userName = userName;
       socket.emit("user:joined", { success: true, userId, message: "User joined successfully" });
-      console.log(`  └─ User ${userName || userId} registered`);
+      console.log(`User ${userName || userId} registered`);
     });
 
-    // ── room:join ───────────────────────────────────
+    // -- room:join -------------------------------------------
     socket.on("room:join", async (data) => {
       try {
         const { roomId, userId } = data;
@@ -90,14 +90,14 @@ app.prepare().then(() => {
         io.to(`room:${roomId}`).emit("room:user:joined", {
           userId, userName: socket.userName, timestamp: new Date(),
         });
-        console.log(`  └─ User ${socket.userName || userId} joined room ${roomId}`);
+        console.log(`User ${socket.userName || userId} joined room ${roomId}`);
       } catch (error) {
         console.error("Error in room:join:", error);
         socket.emit("error", { message: "Failed to join room" });
       }
     });
 
-    // ── message:send ────────────────────────────────
+    // -- message:send ----------------------------------------
     socket.on("message:send", async (data) => {
       try {
         const { text, roomId, userId } = data;
@@ -130,7 +130,7 @@ app.prepare().then(() => {
       }
     });
 
-    // ── room:members:get ────────────────────────────
+    // -- room:members:get ------------------------------------
     socket.on("room:members:get", async (data) => {
       try {
         const { roomId } = data;
@@ -151,7 +151,7 @@ app.prepare().then(() => {
       }
     });
 
-    // ── message:history:get ─────────────────────────
+    // -- message:history:get ---------------------------------
     socket.on("message:history:get", async (data) => {
       try {
         const { roomId, limit = 50, offset = 0 } = data;
@@ -176,7 +176,7 @@ app.prepare().then(() => {
       }
     });
 
-    // ── user:typing ─────────────────────────────────
+    // -- user:typing -----------------------------------------
     socket.on("user:typing", (data) => {
       const { roomId, userId, isTyping } = data;
       if (!roomId || !userId) return;
@@ -185,7 +185,7 @@ app.prepare().then(() => {
       });
     });
 
-    // ── room:leave ──────────────────────────────────
+    // -- room:leave ------------------------------------------
     socket.on("room:leave", (data) => {
       const { roomId, userId } = data;
       if (roomId && userId) {
@@ -197,7 +197,7 @@ app.prepare().then(() => {
       }
     });
 
-    // ── disconnect ──────────────────────────────────
+    // -- disconnect ------------------------------------------
     socket.on("disconnect", () => {
       const userId = socket.userId;
       if (userId) {
@@ -209,13 +209,13 @@ app.prepare().then(() => {
             userId, userName: socket.userName, timestamp: new Date(),
           });
         }
-        console.log(`  └─ User ${socket.userName || userId} disconnected`);
+        console.log(`User ${socket.userName || userId} disconnected`);
       }
     });
   });
 
   httpServer.listen(port, () => {
-    console.log(`\ Ready on http://${hostname}:${port}`);
-    console.log(`Socket.IO server initialized\n`);
+    console.log(`Ready on http://${hostname}:${port}`);
+    console.log(`Socket.IO server initialized`);
   });
 });

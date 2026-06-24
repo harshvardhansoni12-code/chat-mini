@@ -29,10 +29,10 @@ function checkFileExists(filePath, description) {
   const exists = fs.existsSync(fullPath);
 
   if (exists) {
-    log(`✅ ${description}`, "green");
+    log(`[PASS] ${description}`, "green");
     return true;
   } else {
-    log(`❌ ${description} - File not found: ${filePath}`, "red");
+    log(`[FAIL] ${description} - File not found: ${filePath}`, "red");
     return false;
   }
 }
@@ -41,26 +41,26 @@ function checkFileContent(filePath, searchString, description) {
   const fullPath = path.join(projectRoot, filePath);
 
   if (!fs.existsSync(fullPath)) {
-    log(`❌ ${description} - File not found`, "red");
+    log(`[FAIL] ${description} - File not found`, "red");
     return false;
   }
 
   const content = fs.readFileSync(fullPath, "utf8");
   if (content.includes(searchString)) {
-    log(`✅ ${description}`, "green");
+    log(`[PASS] ${description}`, "green");
     return true;
   } else {
-    log(`⚠️  ${description} - Search string not found`, "yellow");
+    log(`[WARN] ${description} - Search string not found`, "yellow");
     return false;
   }
 }
 
 function checkPackageJson() {
-  log("\n📦 Checking package.json dependencies...", "blue");
+  log("\nChecking package.json dependencies...", "blue");
 
   const packagePath = path.join(projectRoot, "package.json");
   if (!fs.existsSync(packagePath)) {
-    log("❌ package.json not found", "red");
+    log("[FAIL] package.json not found", "red");
     return false;
   }
 
@@ -69,19 +69,19 @@ function checkPackageJson() {
   let socketIOCheck = true;
 
   if (packageJson.dependencies?.["socket.io"]) {
-    log(`✅ socket.io (${packageJson.dependencies["socket.io"]})`, "green");
+    log(`[PASS] socket.io (${packageJson.dependencies["socket.io"]})`, "green");
   } else {
-    log("❌ socket.io not found in dependencies", "red");
+    log("[FAIL] socket.io not found in dependencies", "red");
     socketIOCheck = false;
   }
 
   if (packageJson.dependencies?.["socket.io-client"]) {
     log(
-      `✅ socket.io-client (${packageJson.dependencies["socket.io-client"]})`,
+      `[PASS] socket.io-client (${packageJson.dependencies["socket.io-client"]})`,
       "green",
     );
   } else {
-    log("⚠️  socket.io-client not found in dependencies", "yellow");
+    log("[WARN] socket.io-client not found in dependencies", "yellow");
     socketIOCheck = false;
   }
 
@@ -89,11 +89,11 @@ function checkPackageJson() {
 }
 
 function checkPrismaSchema() {
-  log("\n🗄️  Checking Prisma schema...", "blue");
+  log("\nChecking Prisma schema...", "blue");
 
   const schemaPath = path.join(projectRoot, "prisma/schema.prisma");
   if (!fs.existsSync(schemaPath)) {
-    log("⚠️  Prisma schema not found", "yellow");
+    log("[WARN] Prisma schema not found", "yellow");
     return false;
   }
 
@@ -103,9 +103,9 @@ function checkPrismaSchema() {
   const models = ["model User", "model Room", "model Member", "model Message"];
   models.forEach((model) => {
     if (schema.includes(model)) {
-      log(`✅ ${model} found`, "green");
+      log(`[PASS] ${model} found`, "green");
     } else {
-      log(`⚠️  ${model} not found`, "yellow");
+      log(`[WARN] ${model} not found`, "yellow");
       schemaCheck = false;
     }
   });
@@ -114,7 +114,7 @@ function checkPrismaSchema() {
 }
 
 function checkSocketIOCore() {
-  log("\n🔌 Checking Socket.IO core files...", "blue");
+  log("\nChecking Socket.IO core files...", "blue");
 
   let coreCheck = true;
 
@@ -142,12 +142,12 @@ function checkSocketIOCore() {
 }
 
 function checkSocketIOEvents() {
-  log("\n⚡ Checking Socket.IO events...", "blue");
+  log("\nChecking Socket.IO events...", "blue");
 
   const servicePath = path.join(projectRoot, "src/lib/socketService.js");
 
   if (!fs.existsSync(servicePath)) {
-    log("❌ socketService.js not found", "red");
+    log("[FAIL] socketService.js not found", "red");
     return false;
   }
 
@@ -166,9 +166,9 @@ function checkSocketIOEvents() {
 
   events.forEach((event) => {
     if (service.includes(`"${event}"`)) {
-      log(`✅ Event handler: ${event}`, "green");
+      log(`[PASS] Event handler: ${event}`, "green");
     } else {
-      log(`❌ Event handler missing: ${event}`, "red");
+      log(`[FAIL] Event handler missing: ${event}`, "red");
       eventsCheck = false;
     }
   });
@@ -177,12 +177,12 @@ function checkSocketIOEvents() {
 }
 
 function checkSocketIOFeatures() {
-  log("\n🎯 Checking Socket.IO features...", "blue");
+  log("\nChecking Socket.IO features...", "blue");
 
   const servicePath = path.join(projectRoot, "src/lib/socketService.js");
 
   if (!fs.existsSync(servicePath)) {
-    log("❌ socketService.js not found", "red");
+    log("[FAIL] socketService.js not found", "red");
     return false;
   }
 
@@ -199,9 +199,9 @@ function checkSocketIOFeatures() {
 
   features.forEach(([searchTerm, description]) => {
     if (service.includes(searchTerm)) {
-      log(`✅ ${description}`, "green");
+      log(`[PASS] ${description}`, "green");
     } else {
-      log(`⚠️  ${description} not found`, "yellow");
+      log(`[WARN] ${description} not found`, "yellow");
       featuresCheck = false;
     }
   });
@@ -210,7 +210,7 @@ function checkSocketIOFeatures() {
 }
 
 function checkComponents() {
-  log("\n🎨 Checking React components...", "blue");
+  log("\nChecking React components...", "blue");
 
   let componentCheck = true;
 
@@ -223,7 +223,7 @@ function checkComponents() {
 }
 
 function checkTests() {
-  log("\n🧪 Checking test files...", "blue");
+  log("\nChecking test files...", "blue");
 
   let testsCheck = true;
 
@@ -241,7 +241,7 @@ function checkTests() {
 }
 
 function checkDocumentation() {
-  log("\n📚 Checking documentation...", "blue");
+  log("\nChecking documentation...", "blue");
 
   let docCheck = true;
 
@@ -256,12 +256,12 @@ function checkDocumentation() {
 }
 
 function checkHookFunctionality() {
-  log("\n🪝 Checking useSocket hook functionality...", "blue");
+  log("\nChecking useSocket hook functionality...", "blue");
 
   const hookPath = path.join(projectRoot, "src/hooks/useSocket.js");
 
   if (!fs.existsSync(hookPath)) {
-    log("❌ useSocket.js not found", "red");
+    log("[FAIL] useSocket.js not found", "red");
     return false;
   }
 
@@ -280,9 +280,9 @@ function checkHookFunctionality() {
 
   functions.forEach((func) => {
     if (hook.includes(func)) {
-      log(`✅ Hook function: ${func}`, "green");
+      log(`[PASS] Hook function: ${func}`, "green");
     } else {
-      log(`❌ Hook function missing: ${func}`, "red");
+      log(`[FAIL] Hook function missing: ${func}`, "red");
       hookCheck = false;
     }
   });
@@ -291,15 +291,9 @@ function checkHookFunctionality() {
 }
 
 function main() {
-  log(
-    "\n╔════════════════════════════════════════════════════════════╗",
-    "blue",
-  );
-  log("║        Socket.IO Implementation Verification              ║", "blue");
-  log(
-    "╚════════════════════════════════════════════════════════════╝\n",
-    "blue",
-  );
+  log("\n============================================================", "blue");
+  log("       Socket.IO Implementation Verification", "blue");
+  log("============================================================\n", "blue");
 
   const checks = [
     checkPackageJson,
@@ -317,20 +311,14 @@ function main() {
     try {
       return check();
     } catch (error) {
-      log(`❌ Error running check: ${error.message}`, "red");
+      log(`[FAIL] Error running check: ${error.message}`, "red");
       return false;
     }
   });
 
-  log(
-    "\n╔════════════════════════════════════════════════════════════╗",
-    "blue",
-  );
-  log("║                   VERIFICATION SUMMARY                    ║", "blue");
-  log(
-    "╚════════════════════════════════════════════════════════════╝\n",
-    "blue",
-  );
+  log("\n============================================================", "blue");
+  log("                   VERIFICATION SUMMARY", "blue");
+  log("============================================================\n", "blue");
 
   const passed = results.filter((r) => r).length;
   const total = results.length;
@@ -341,7 +329,7 @@ function main() {
   );
 
   if (passed === total) {
-    log("\n✅ All Socket.IO components are properly set up!", "green");
+    log("\n[PASS] All Socket.IO components are properly set up!", "green");
     log("\nNext steps:", "blue");
     log("  1. npm install (to install socket.io-client)", "gray");
     log("  2. npm run dev (start development server)", "gray");
@@ -351,7 +339,7 @@ function main() {
     log("  - See /__tests__/socketManualTests.js", "gray");
     log("  - Run: await runCompleteSocketTest()", "gray");
   } else {
-    log("\n⚠️  Some checks failed. Please review the issues above.", "yellow");
+    log("\n[WARN] Some checks failed. Please review the issues above.", "yellow");
   }
 
   log("\n");

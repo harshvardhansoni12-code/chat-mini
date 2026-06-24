@@ -1,5 +1,4 @@
 // This file is for Socket.IO server setup with Next.js
-// In Next.js 13+, Socket.IO is typically run alongside the Next server
 // This can be initialized in a custom server or via middleware
 
 import { createServer } from "http";
