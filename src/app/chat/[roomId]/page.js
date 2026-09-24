@@ -306,27 +306,8 @@ export default function ChatPage({ params }) {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
-      <div className="glass border-b border-gray-200/60 px-4 py-3 flex items-center justify-between shrink-0 sticky top-0 z-20">
+      <div className="glass border-b border-gray-200/60 px-4 py-3 flex items-center shrink-0 sticky top-0 z-20">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push("/rooms")}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-500 hover:text-gray-900"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
           {/* Room Avatar */}
           <div
             className={`w-10 h-10 rounded-full ${getAvatarGradient(roomData?.roomname)} flex items-center justify-center shadow-sm`}
@@ -350,39 +331,6 @@ export default function ChatPage({ params }) {
               </p>
             </div>
           </div>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <button className="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-700">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-          <button className="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-700">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-              />
-            </svg>
-          </button>
         </div>
       </div>
 
