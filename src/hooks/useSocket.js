@@ -12,8 +12,8 @@ export function useSocket() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Initialize socket connection
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+    // Initialize socket connection on the same origin by default.
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || undefined;
 
     socketRef.current = io(socketUrl, {
       reconnection: true,
@@ -83,53 +83,78 @@ export function useSocket() {
   }, []);
 
   // Join as user
-  const joinUser = useCallback((userId, userName) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("user:join", { userId, userName });
-    }
-  }, [isConnected]);
+  const joinUser = useCallback(
+    (userId, userName) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("user:join", { userId, userName });
+      }
+    },
+    [isConnected],
+  );
 
   // Join room
-  const joinRoom = useCallback((roomId, userId) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("room:join", { roomId, userId });
-    }
-  }, [isConnected]);
+  const joinRoom = useCallback(
+    (roomId, userId) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("room:join", { roomId, userId });
+      }
+    },
+    [isConnected],
+  );
 
   // Send message
-  const sendMessage = useCallback((text, roomId, userId) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("message:send", { text, roomId, userId });
-    }
-  }, [isConnected]);
+  const sendMessage = useCallback(
+    (text, roomId, userId) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("message:send", { text, roomId, userId });
+      }
+    },
+    [isConnected],
+  );
 
   // Get room members
-  const getRoomMembers = useCallback((roomId) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("room:members:get", { roomId });
-    }
-  }, [isConnected]);
+  const getRoomMembers = useCallback(
+    (roomId) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("room:members:get", { roomId });
+      }
+    },
+    [isConnected],
+  );
 
   // Get message history
-  const getMessageHistory = useCallback((roomId, limit = 50, offset = 0) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("message:history:get", { roomId, limit, offset });
-    }
-  }, [isConnected]);
+  const getMessageHistory = useCallback(
+    (roomId, limit = 50, offset = 0) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("message:history:get", {
+          roomId,
+          limit,
+          offset,
+        });
+      }
+    },
+    [isConnected],
+  );
 
   // Emit typing indicator
-  const setTyping = useCallback((roomId, userId, isTyping) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("user:typing", { roomId, userId, isTyping });
-    }
-  }, [isConnected]);
+  const setTyping = useCallback(
+    (roomId, userId, isTyping) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("user:typing", { roomId, userId, isTyping });
+      }
+    },
+    [isConnected],
+  );
 
   // Leave room
-  const leaveRoom = useCallback((roomId, userId) => {
-    if (socketRef.current && isConnected) {
-      socketRef.current.emit("room:leave", { roomId, userId });
-    }
-  }, [isConnected]);
+  const leaveRoom = useCallback(
+    (roomId, userId) => {
+      if (socketRef.current && isConnected) {
+        socketRef.current.emit("room:leave", { roomId, userId });
+      }
+    },
+    [isConnected],
+  );
 
   return {
     socket: socketRef.current,

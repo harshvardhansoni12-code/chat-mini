@@ -1,4 +1,4 @@
-﻿import prisma from "@/lib/prisma";
+﻿import prisma from "./prisma.js";
 
 export async function createRoom({ roomname, roomcode, authorId }) {
   return prisma.room.create({

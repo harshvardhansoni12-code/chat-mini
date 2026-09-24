@@ -1,16 +1,38 @@
 import { Server } from "socket.io";
-import { findRoomMember, listRoomMembers } from "@/lib/roomService";
-import { createMessage, getMessagesByRoom } from "@/lib/messageService";
-import { getUserById } from "@/lib/userService";
+import { findRoomMember, listRoomMembers } from "./roomService.js";
+import { createMessage, getMessagesByRoom } from "./messageService.js";
+import { getUserById } from "./userService.js";
 
 let io = null;
 const connectedUsers = new Map(); // userId -> socket info
 const roomMembers = new Map(); // roomId -> Set of userIds
 
+function getAllowedSocketOrigins() {
+  return [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_SOCKET_URL,
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+  ].filter(Boolean);
+}
+
 export function initializeSocket(server) {
+  if (io) {
+    return io;
+  }
+
   io = new Server(server, {
     cors: {
-      origin: process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000",
+      origin: (origin, callback) => {
+        const allowedOrigins = getAllowedSocketOrigins();
+
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+          return;
+        }
+
+        callback(new Error("Not allowed by CORS"));
+      },
       methods: ["GET", "POST"],
       credentials: true,
     },

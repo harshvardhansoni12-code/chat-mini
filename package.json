@@ -2,11 +2,12 @@
   "name": "chat-mini",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "npx tsx server.mjs",
+    "dev": "node server.js",
     "dev:next": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "node server.js",
     "lint": "eslint"
   },
   "dependencies": {

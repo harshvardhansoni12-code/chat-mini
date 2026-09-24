@@ -1,10 +1,4 @@
-import { initializeSocket, getIO } from "@/lib/socketService";
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+import { getIO } from "@/lib/socketService";
 
 export async function GET(req) {
   try {
@@ -18,7 +12,7 @@ export async function GET(req) {
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     return new Response(
@@ -29,7 +23,7 @@ export async function GET(req) {
       {
         status: 503,
         headers: { "Content-Type": "application/json" },
-      }
+      },
     );
   }
 }
